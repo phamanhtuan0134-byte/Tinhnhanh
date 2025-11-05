@@ -18,18 +18,38 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'npm'
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Show env
+        run: |
+          node -v
+          npm -v
+          ls -la
+          cat package.json | jq '.name, .scripts'
 
-      - name: Build project
+      # Nếu có package-lock.json thì dùng npm ci, nếu không thì npm install
+      - name: Install deps
+        run: |
+          if [ -f "yarn.lock" ]; then
+            corepack enable
+            yarn --version
+            yarn install --frozen-lockfile
+          elif [ -f "package-lock.json" ]; then
+            npm ci
+          else
+            echo "No lockfile found, running 'npm install'..."
+            npm install
+          fi
+
+      # Build
+      - name: Build
         env:
           VITE_GEMINI_API_KEY: ${{ secrets.VITE_GEMINI_API_KEY }}
           NODE_ENV: production
