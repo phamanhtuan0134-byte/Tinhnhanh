@@ -6,7 +6,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
 export default defineConfig({
-  base: process.env.NODE_ENV === 'production' ? '/Tinhnhanh6/' : '/',
+  base: process.env.NODE_ENV === 'production' ? '/Tinhnhanh/' : '/',
   plugins: [react()],
 })
 
